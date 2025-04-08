@@ -1,4 +1,3 @@
-// #pragma once
 #include <gms/common/types.h>
 #include <cassert>
 #include <mpi.h>
@@ -14,7 +13,6 @@ size_t count_total(const SGraph &graph) {
   csize = n / gsize;
 
     size_t total = 0;
-    // #pragma omp parallel for schedule(static, 17) reduction(+:total)
     for (NodeId u = rank*csize; u < (rank+1)*csize; ++u) {
         const auto &neigh_u = graph.out_neigh(u);
         for (NodeId v : neigh_u) {
