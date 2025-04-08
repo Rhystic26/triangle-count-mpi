@@ -1,2 +1,9 @@
-# triangle-counting-mpi
-A reparallelization of GraphMineSuite's (GMS) Triangle Counting graph algorithm from openMP to Message Passing Interface (MPI).
+# triangle-count-mpi
+A re-parallelization of GraphMineSuite's (GMS) Triangle Count graph algorithm from openMP to Message Passing Interface (MPI).
+## Overview
+This is a small project I worked on for my Parallel Processing class (CSCI 338, Spring 2025) at Williams College. For the project I was tasked with converting graph algorithms from the wonderful benchmark program GraphMineSuite (https://graphminesuite.spcl.inf.ethz.ch/) to MPI from their original openMP implementation. While this project does actually run when used with a modified version of GMS, I unfortunately cannot post the fully GMS code here. This repository is meant to serve as a record of my work!
+
+## Design
+Triangle Count is an algorithm that, given an undirected graph of nodes, calculates the number of triangles (a group of 3 directly connected vertices) present in the graph. It's used in a wide range of data analysis contexts, most notably for determining network transitivity (the likelihood of adjacent nodes in a graph being connected to each other - in other words, how tightly connected a given network/dataset/graph is). At the highest level, Triangle Count simply requires the computer to iterate through every vertex in a graph once. GMS' original openMP parallelization uses preprocessor directives to implement block partitioning - each node is assigned vertices in a round-robin fashion to process on its own.
+
+To keep in line with GMS' coding philosophy, my MPI implementation also uses block partitioning (ex. process 0 recieves nodes 1-5, process 1 recieves nodes 6-10, and so on) to divide up a graph's nodes. After totalling the number of triangles that its examined nodes are a part of, each process passes its total to process 0 (the highest-ranked MPI process) using MPI_Reduce(). Process 0 then adds up all the subtotals and returns the full number of triangles.
